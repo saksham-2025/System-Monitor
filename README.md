@@ -1,3 +1,4 @@
 NEXT -GEN System Monitor
 
-This is basically the start of this project , it will use c++ as its language
+This project is a system monitor built in C++ that will display CPU and 
+memory usage using LINUX system files.
