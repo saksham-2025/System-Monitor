@@ -2,9 +2,10 @@
 #include <fstream>
 #include<sstream>
 #include<unistd.h>
+#include<iomanip>
 using namespace std ;
 
-pair<long,long> Get_CPU_Data(){
+pair<long,long> getCPUData(){
 	ifstream file ; 
 	file.open("/proc/stat");
 	if (!file.is_open()){
@@ -24,11 +25,16 @@ pair<long,long> Get_CPU_Data(){
 
 }
 int main(){
-	auto data1 = Get_CPU_Data();
-	sleep(1);
-	auto data2 = Get_CPU_Data();
-	long total_time = data2.first-data1.first ;
-	long total_idle = data2.second-data1.second ;
-	double  ans =double(total_time -total_idle)/total_time ;
-	cout << "the cpu usage =>" << ans*100 << "%"<<endl ;
+	while(true){
+		auto data1 = getCPUData();
+		sleep(1);
+		auto data2 = getCPUData();
+		long total_time = data2.first-data1.first ;
+		long total_idle = data2.second-data1.second ;
+		if(total_time==0) continue ;
+		double  ans =double(total_time -total_idle)/total_time ;
+		system("clear");
+		cout << "CPU Usage : "<<fixed << setprecision(2) << ans*100 << "%"<<endl ;
+	}
+
 }
