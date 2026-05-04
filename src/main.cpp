@@ -24,6 +24,30 @@ pair<long,long> getCPUData(){
 	return {totaltime,idle};
 
 }
+pair<long , long> getMemdata(){
+	ifstream file;
+	file.open("/proc/meminfo");
+	if (!file.is_open()){
+		cout <<"Error occurred while open file " ;
+		return{0,0};
+	}
+	string line ; 
+	long memtotal;
+	long memavail ;
+	while(getline(file,line)){
+		stringstream ss(line);
+		string key; 
+		long value ;
+		ss>> key >>value ;
+		if (key == "MemTotal:"){
+			memtotal = value;
+		}
+		else if(key == "MemAvailable:"){
+			memavail=value;
+		}
+	}
+	return{memtotal,memavail};
+}
 int main(){
 	while(true){
 		auto data1 = getCPUData();
@@ -32,9 +56,15 @@ int main(){
 		long total_time = data2.first-data1.first ;
 		long total_idle = data2.second-data1.second ;
 		if(total_time==0) continue ;
-		double  ans =double(total_time -total_idle)/total_time ;
+		double  cpuUsage =double(total_time -total_idle)/total_time ;
 		system("clear");
-		cout << "CPU Usage : "<<fixed << setprecision(2) << ans*100 << "%"<<endl ;
+		cout << "CPU Usage : "<<fixed << setprecision(2) << cpuUsage*100 << "%"<<endl ;
+		pair<long,long > memdata = getMemdata() ; 
+		long memTotal = memdata.first ;
+		long memAvailable= memdata.second ; 
+		double memUsage = double(memTotal - memAvailable)/memTotal ;
+		cout << "MemoryUsage : "<<fixed <<setprecision(2) << memUsage*100 << "%" <<endl;
 	}
+	
 
 }
