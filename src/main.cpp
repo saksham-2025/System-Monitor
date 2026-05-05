@@ -3,6 +3,7 @@
 #include<sstream>
 #include<unistd.h>
 #include<iomanip>
+#include<dirent.h>
 using namespace std ;
 
 pair<long,long> getCPUData(){
@@ -48,6 +49,31 @@ pair<long , long> getMemdata(){
 	}
 	return{memtotal,memavail};
 }
+bool isNumeric(string name){
+	for(char c : name){
+		if (!isdigit(c)){
+			return false;
+		}
+	}
+	return true;
+}
+void listProcesses(){
+	DIR* dir = opendir("/proc");
+	struct dirent* entry;
+	while ((entry = readdir(dir))!=NULL){
+		if (isNumeric(entry->d_name)){
+			string PId= entry->d_name;
+			string path = "/proc/"+PId+"/comm";
+			ifstream file(path);
+			if(!file.is_open()) continue;
+			string name ;
+			getline(file,name);
+			cout << "PID " << PId << " : " << name <<endl ;
+
+		}
+	}
+	closedir(dir);
+}
 int main(){
 	while(true){
 		auto data1 = getCPUData();
@@ -62,9 +88,11 @@ int main(){
 		pair<long,long > memdata = getMemdata() ; 
 		long memTotal = memdata.first ;
 		long memAvailable= memdata.second ; 
+		if(memTotal == 0) continue ;
 		double memUsage = double(memTotal - memAvailable)/memTotal ;
 		cout << "MemoryUsage : "<<fixed <<setprecision(2) << memUsage*100 << "%" <<endl;
 	}
-	
+	//This is the function to print all the process with its process IDs.
+	//listProcesses();	
 
 }
