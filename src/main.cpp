@@ -57,22 +57,46 @@ bool isNumeric(string name){
 	}
 	return true;
 }
+string getProcessName(string path){
+    ifstream file(path);
+    if(!file.is_open()) return "";
+    string name ;
+    getline(file,name);
+    return name;
+}
+long getProcessVmRSS(string path){
+    ifstream file(path);
+    if(!file.is_open()) return 0;
+    string line ;
+    while (getline(file,line)){
+        stringstream ss(line);
+        string key ;
+        long value ;
+        ss >>key >>value;
+        if(key == "VmRSS:"){
+            return value ;
+            break;
+        }
+    }
+    return 0;
+}
 void listProcesses(){
-	DIR* dir = opendir("/proc");
-	struct dirent* entry;
-	while ((entry = readdir(dir))!=NULL){
-		if (isNumeric(entry->d_name)){
-			string PId= entry->d_name;
-			string path = "/proc/"+PId+"/comm";
-			ifstream file(path);
-			if(!file.is_open()) continue;
-			string name ;
-			getline(file,name);
-			cout << "PID " << PId << " : " << name <<endl ;
-
-		}
-	}
-	closedir(dir);
+    DIR* dir = opendir("/proc");
+    struct dirent* entry ;
+    cout << left << setw(10)<<"PID" << setw(35) << "NAME" << setw(10) << "MEMORY(KB)" << endl ;
+    cout << "--------------------------------------------------------------"<<endl;
+    while((entry =readdir(dir))!=NULL){
+        if(isNumeric(entry->d_name)){
+            string PID=entry->d_name ;
+            string Name_Path = "/proc/"+ PID +"/comm";
+            string VmRSS_Path = "/proc/" + PID +"/status";
+            string name = getProcessName(Name_Path);
+            long VmRSS = getProcessVmRSS(VmRSS_Path);
+            if(VmRSS==0) continue ;
+            cout <<left << setw(10) <<PID << setw(35) << name << setw(10) << VmRSS << endl ;
+        }
+    }
+    closedir(dir);
 }
 int main(){
 	while(true){
@@ -93,6 +117,6 @@ int main(){
 		cout << "MemoryUsage : "<<fixed <<setprecision(2) << memUsage*100 << "%" <<endl;
 	}
 	//This is the function to print all the process with its process IDs.
-	//listProcesses();	
+	listProcesses();	
 
 }
