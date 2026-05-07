@@ -4,8 +4,16 @@
 #include<unistd.h>
 #include<iomanip>
 #include<dirent.h>
+#include<vector>
 using namespace std ;
-
+struct Process{
+    string PID ;
+    string Name ; 
+    long memory ;
+    long oldCPUTime ;
+    long newCPUTime ;
+    double cpuUsage ;
+};
 pair<long,long> getCPUData(){
 	ifstream file ; 
 	file.open("/proc/stat");
@@ -80,26 +88,70 @@ long getProcessVmRSS(string path){
     }
     return 0;
 }
-void listProcesses(){
-    DIR* dir = opendir("/proc");
-    struct dirent* entry ;
-    cout << left << setw(10)<<"PID" << setw(35) << "NAME" << setw(10) << "MEMORY(KB)" << endl ;
-    cout << "--------------------------------------------------------------"<<endl;
-    while((entry =readdir(dir))!=NULL){
-        if(isNumeric(entry->d_name)){
-            string PID=entry->d_name ;
+long getProcessCPUTime(string path){
+	ifstream file(path);
+	if(!file.is_open()) return 0 ; 
+	string line ;
+	getline(file,line);
+	stringstream ss(line);
+	string temp;
+	for (int idx = 0 ; idx < 13 ; idx++){
+		ss>>temp;
+	}
+	long utime ;
+	long stime ;
+	ss >> utime >> stime;
+	file.close();
+	return utime+stime;
+}
+vector<Process> collectProcessData(){
+        vector <Process> processes ;
+        DIR* dir = opendir("/proc");
+        struct dirent* entry ;
+
+        while((entry =readdir(dir))!=NULL){
+            if(isNumeric(entry->d_name)){
+                Process p ;
+                string PID=entry->d_name ;
+                p.PID=PID ;
             string Name_Path = "/proc/"+ PID +"/comm";
             string VmRSS_Path = "/proc/" + PID +"/status";
-            string name = getProcessName(Name_Path);
-            long VmRSS = getProcessVmRSS(VmRSS_Path);
-            if(VmRSS==0) continue ;
-            cout <<left << setw(10) <<PID << setw(35) << name << setw(10) << VmRSS << endl ;
+            string CPU_path = "/proc/"+PID +"/stat";
+            p.Name = getProcessName(Name_Path);
+            p.memory= getProcessVmRSS(VmRSS_Path);
+			if(p.memory==0) continue ;
+            p.oldCPUTime =getProcessCPUTime(CPU_path);
+            processes.push_back(p);
         }
     }
     closedir(dir);
+	long oldCPUtime =getCPUData().first;
+    sleep(1);
+    long newCPUtime =getCPUData().first;
+    double CpuDelta = newCPUtime-oldCPUtime;
+    for (Process &p : processes){
+        string path = "/proc/"+p.PID +"/stat";
+        p.newCPUTime = getProcessCPUTime(path);
+        double ProcessDelta = p.newCPUTime-p.oldCPUTime;
+        if(CpuDelta==0) continue ;
+        p.cpuUsage = double(ProcessDelta)/CpuDelta ;
+        
+    } 
+	return processes;
 }
+void renderProcessTable(vector<Process> &processes){
+        cout << left << setw(10)<<"PID" << setw(35) << "NAME" <<setw(10)<<"CPU%"<< setw(10) << "MEMORY(KB)" << endl ;
+        cout << "--------------------------------------------------------------"<<endl;
+ 
+    for (Process &p : processes){
+   
+        cout <<left << setw(10) <<p.PID << setw(35) << p.Name <<fixed << setprecision(2)<< setw(9)<<p.cpuUsage*100<< setw(10) << p.memory << endl ;
+    } 
+}
+        
+
 int main(){
-	while(true){
+	/**while(true){
 		auto data1 = getCPUData();
 		sleep(1);
 		auto data2 = getCPUData();
@@ -115,8 +167,9 @@ int main(){
 		if(memTotal == 0) continue ;
 		double memUsage = double(memTotal - memAvailable)/memTotal ;
 		cout << "MemoryUsage : "<<fixed <<setprecision(2) << memUsage*100 << "%" <<endl;
-	}
+	}**/
 	//This is the function to print all the process with its process IDs.
-	listProcesses();	
+	vector <Process> processes = collectProcessData();	
+	renderProcessTable(processes);
 
 }
