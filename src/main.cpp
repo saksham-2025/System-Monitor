@@ -1,10 +1,11 @@
 #include<iostream> 
-#include <fstream>
-#include<sstream>
-#include<unistd.h>
-#include<iomanip>
-#include<dirent.h>
-#include<vector>
+#include <fstream> // used to read and write  the file >>> ifstream for input <<< ofstream for output
+#include<sstream>  // used to parse the file for reading
+#include<unistd.h> // used to access POSIX operating system API i.e., sleep(1)
+#include<iomanip> // For proper output using setw & set precision in cout 
+#include<dirent.h> // to open , read and close directory
+#include<vector> // to use vector 
+#include<algorithm>   //For sorting
 using namespace std ;
 struct Process{
     string PID ;
@@ -104,6 +105,12 @@ long getProcessCPUTime(string path){
 	file.close();
 	return utime+stime;
 }
+bool compareByCPU(const Process &a ,const Process &b){
+	return a.cpuUsage>b.cpuUsage ;
+}
+bool compareBYMemory(const Process &a , const Process &b){
+	return a.memory>b.memory ;
+}
 vector<Process> collectProcessData(){
         vector <Process> processes ;
         DIR* dir = opendir("/proc");
@@ -139,12 +146,13 @@ vector<Process> collectProcessData(){
     } 
 	return processes;
 }
-void renderProcessTable(vector<Process> &processes){
+
+void renderProcessTable(const vector<Process> &processes,int limit){
         cout << left << setw(10)<<"PID" << setw(35) << "NAME" <<setw(10)<<"CPU%"<< setw(10) << "MEMORY(KB)" << endl ;
         cout << "--------------------------------------------------------------"<<endl;
  
-    for (Process &p : processes){
-   
+    for (int idx= 0 ; idx<limit  ; idx++){
+		const Process &p = processes[idx];
         cout <<left << setw(10) <<p.PID << setw(35) << p.Name <<fixed << setprecision(2)<< setw(9)<<p.cpuUsage*100<< setw(10) << p.memory << endl ;
     } 
 }
@@ -169,7 +177,9 @@ int main(){
 		cout << "MemoryUsage : "<<fixed <<setprecision(2) << memUsage*100 << "%" <<endl;
 	}**/
 	//This is the function to print all the process with its process IDs.
+
 	vector <Process> processes = collectProcessData();	
-	renderProcessTable(processes);
+	sort(processes.begin(),processes.end(),compareByCPU);
+	renderProcessTable(processes ,10);
 
 }
