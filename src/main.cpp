@@ -111,9 +111,10 @@ bool compareByCPU(const Process &a ,const Process &b){
 bool compareBYMemory(const Process &a , const Process &b){
 	return a.memory>b.memory ;
 }
-vector<Process> collectProcessData(){
+vector<Process> takeProcessSnapshot(){
         vector <Process> processes ;
         DIR* dir = opendir("/proc");
+		if (!dir) { cerr << "Cannot open /proc\n"; return {}; }
         struct dirent* entry ;
 
         while((entry =readdir(dir))!=NULL){
@@ -131,27 +132,24 @@ vector<Process> collectProcessData(){
             processes.push_back(p);
         }
     }
-    closedir(dir);
-	long oldCPUtime =getCPUData().first;
-    sleep(1);
-    long newCPUtime =getCPUData().first;
-    double CpuDelta = newCPUtime-oldCPUtime;
+	closedir(dir);
+	return processes ;
+}
+void CalculateProcessCpuUsage(vector<Process> &processes , double CpuDelta ){
     for (Process &p : processes){
         string path = "/proc/"+p.PID +"/stat";
         p.newCPUTime = getProcessCPUTime(path);
         double ProcessDelta = p.newCPUTime-p.oldCPUTime;
         if(CpuDelta==0) continue ;
-        p.cpuUsage = double(ProcessDelta)/CpuDelta ;
-        
+        p.cpuUsage = double(ProcessDelta)/CpuDelta ;    
     } 
-	return processes;
 }
 
 void renderProcessTable(const vector<Process> &processes,int limit){
         cout << left << setw(10)<<"PID" << setw(35) << "NAME" <<setw(10)<<"CPU%"<< setw(10) << "MEMORY(KB)" << endl ;
         cout << "--------------------------------------------------------------"<<endl;
  
-    for (int idx= 0 ; idx<limit  ; idx++){
+    for (int idx= 0 ; idx<min(limit , int(processes.size()))  ; idx++){
 		const Process &p = processes[idx];
         cout <<left << setw(10) <<p.PID << setw(35) << p.Name <<fixed << setprecision(2)<< setw(9)<<p.cpuUsage*100<< setw(10) << p.memory << endl ;
     } 
@@ -177,8 +175,12 @@ int main(){
 		cout << "MemoryUsage : "<<fixed <<setprecision(2) << memUsage*100 << "%" <<endl;
 	}**/
 	//This is the function to print all the process with its process IDs.
-
-	vector <Process> processes = collectProcessData();	
+	vector <Process> processes = takeProcessSnapshot();	
+	long oldCPUtime =getCPUData().first;
+    sleep(1);
+    long newCPUtime =getCPUData().first;
+    double CpuDelta = newCPUtime-oldCPUtime;
+	CalculateProcessCpuUsage(processes , CpuDelta);
 	sort(processes.begin(),processes.end(),compareByCPU);
 	renderProcessTable(processes ,10);
 
