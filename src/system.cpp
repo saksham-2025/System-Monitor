@@ -23,7 +23,7 @@ pair<long,long> getCPUData(){
 	return {totaltime,idle};
 
 }
-pair<long , long> getMemdata(){
+pair<long , long> getMemData(){
 	ifstream file;
 	file.open("/proc/meminfo");
 	if (!file.is_open()){
@@ -46,6 +46,18 @@ pair<long , long> getMemdata(){
 		}
 	}
 	return{memtotal,memavail};
+}
+double getCpuUsage( pair<long,long>  data1 , pair<long,long> data2){
+	long total = data2.first - data1.first ;
+	long idle = data2.second - data1.second ;
+	if(total == 0 ) return 0;
+	return double(total -idle)/total ;
+}
+double getMemUsage(){
+	long MemTotal = getMemData().first ;
+	long MemAvail = getMemData().second ;
+	if (MemAvail== 0) return 0 ;
+	return double(MemTotal - MemAvail)/MemTotal ;	
 }
 
 
