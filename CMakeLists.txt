@@ -10,3 +10,4 @@ add_executable(monitor
     src/system.cpp
     src/renderer.cpp
 )
+target_link_libraries(monitor ncurses)
