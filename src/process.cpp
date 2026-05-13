@@ -56,7 +56,7 @@ long getProcessCPUTime(string path){
 bool compareByCPU(const Process &a ,const Process &b){
 	return a.cpuUsage>b.cpuUsage ;
 }
-bool compareBYMemory(const Process &a , const Process &b){
+bool compareByMemory(const Process &a , const Process &b){
 	return a.memory>b.memory ;
 }
 vector<Process> takeProcessSnapshot(){

@@ -19,7 +19,7 @@ std::string getProcessName(std::string path);
 long getProcessVmRSS(std::string path) ;
 long getProcessCPUTime(std::string path);
 bool compareByCPU(const Process &a ,const Process &b);
-bool compareBYMemory(const Process &a , const Process &b);
+bool compareByMemory(const Process &a , const Process &b);
 std::vector<Process> takeProcessSnapshot();
 void calculateProcessCpuUsage(std::vector<Process> &processes , double CpuDelta );
 

@@ -31,8 +31,8 @@ pair<long , long> getMemData(){
 		return{0,0};
 	}
 	string line ; 
-	long memtotal;
-	long memavail ;
+	long memtotal = 0;
+	long memavail = 0;
 	while(getline(file,line)){
 		stringstream ss(line);
 		string key; 
@@ -54,9 +54,10 @@ double getCpuUsage( pair<long,long>  data1 , pair<long,long> data2){
 	return double(total -idle)/total ;
 }
 double getMemUsage(){
-	long MemTotal = getMemData().first ;
-	long MemAvail = getMemData().second ;
-	if (MemAvail== 0) return 0 ;
+	auto data =getMemData();
+	long MemTotal = data.first ;
+	long MemAvail = data.second ;
+	if (MemTotal== 0) return 0 ;
 	return double(MemTotal - MemAvail)/MemTotal ;	
 }
 

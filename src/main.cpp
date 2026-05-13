@@ -6,17 +6,53 @@
 #include<algorithm>   //For sorting
 #include<iomanip>
 #include<ncurses.h>
+#include<signal.h>
 using namespace std ;
-      
+
+void handleKeyboardInput(char ch ,bool &sortByCPU){
+     if(ch=='c') {
+        sortByCPU =true ;
+    }
+    else if(ch=='m'){
+        sortByCPU = false ;
+    } 
+     
+}
+void renderSortMessage(vector<Process> &processes , bool &sortByCPU){
+if(sortByCPU){
+    sort(processes.begin(), processes.end(), compareByCPU);
+    mvprintw(22 ,2 ,"SORT BY CPU");
+    }
+else{
+    sort(processes.begin(), processes.end(), compareByMemory);
+    mvprintw(22 ,2 ,"SORT BY MEMORY");
+    }
+}
+void handleKillProcess(){
+      timeout(-1);
+        echo();
+        mvprintw(24 , 2 , "Enter the Process Id: ") ;
+        int pid ;
+        scanw("%d",&pid);
+        noecho();
+        timeout(100);
+        int result =kill(pid , SIGTERM);
+        if (result ==0) mvprintw(25 ,2 , "Process Successfully Terminated ");
+        else mvprintw(25,2 ,"Failed to terminate process") ;
+        refresh();
+        getch();
+}    
 
 int main(){
 initscr();
-keypad(stdscr, TRUE);
+noecho();        // don't print keypresses to screen
+curs_set(0);     // hide the blinking cursor
+keypad(stdscr, TRUE); //without this terminal show ^[[AB ..so this command handles this
 timeout(100);
 bool sortByCPU= true ;
 while (true){
     clear();
-    mvprintw(0, 2,"Press q to quit | c = CPU sort | m = Memory sort");
+    mvprintw(0, 2,"Press q to quit | c = CPU sort | m = Memory sort | k = kill process");
     auto data1 = getCPUData();
     vector<Process> processes = takeProcessSnapshot();
     sleep(1);
@@ -25,28 +61,17 @@ while (true){
     double cpuUsage = getCpuUsage(data1 ,data2);
     double memUsage=  getMemUsage();
     // sort(processes.begin(),processes.end(),compareByCPU);
-    if(sortByCPU)
-{
-    sort(processes.begin(), processes.end(), compareByCPU);
-    mvprintw(22 ,2 ,"SORT BY CPU");
-}
-else
-{
-    sort(processes.begin(), processes.end(), compareBYMemory);
-    mvprintw(22 ,2 ,"SORT BY MEMORY");
-    
-}
+    renderSortMessage(processes,sortByCPU);
     renderSystemStats(cpuUsage ,memUsage);
     renderProcessTable(processes,10);
     refresh() ;
     int ch = getch();
     if(ch == 'q') break ;
-    else if(ch=='c') {
-        sortByCPU =true ;
+    else if(ch == 'k'){
+     handleKillProcess();
     }
-    else if(ch=='m'){
-        sortByCPU = false ;
-    }    
+
+    else handleKeyboardInput(ch ,sortByCPU);
 }
 endwin();
  
