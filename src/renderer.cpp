@@ -21,8 +21,10 @@ void renderProcessTable(const vector<Process> &processes,int limit){
         mvprintw(idx+9 , 60 , "%ld" , p.memory);
     } 
 }
-void renderSystemStats(double cpuUsage ,double memUsage){
+void renderSystemStats(double cpuUsage ,double memUsage , double diskUsage){
     mvprintw(1,2, "System Monitor");
-    mvprintw(3,2, "CPU Usage : %.2f%%" , cpuUsage*100);
-    mvprintw(4,2, "Memory Usage : %.2f%%" , memUsage*100);
+    mvprintw(2,2, "CPU Usage : %.2f%%" , cpuUsage*100);
+    mvprintw(3,2, "Memory Usage : %.2f%%" , memUsage*100);
+    mvprintw(4,2, "Disk Usage : %.2f%%" , diskUsage*100);
+
 }

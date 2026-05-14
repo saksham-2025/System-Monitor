@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <sys/statvfs.h>
 using namespace std ;
 
 pair<long,long> getCPUData(){
@@ -60,6 +61,20 @@ double getMemUsage(){
 	if (MemTotal== 0) return 0 ;
 	return double(MemTotal - MemAvail)/MemTotal ;	
 }
+double getDiskUsage(){
+	struct statvfs diskData;
+	auto check = statvfs("/", &diskData);
+	if (check!=0) return 0 ;
+	long total_block = diskData.f_blocks;
+	long avail_block = diskData.f_bavail;
+	long block_size = diskData.f_frsize;
+	long long total_capacity = total_block* block_size ;
+	long long free_capacity = avail_block * block_size ; 
+	if (total_capacity==0) return 0 ;
+	return  double(total_capacity - free_capacity)/total_capacity ;
+	// since block size gets cut from numerator/ denominator later we ignore block size
+}
+
 
 
 

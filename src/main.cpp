@@ -6,7 +6,7 @@
 #include<algorithm>   //For sorting
 #include<iomanip>
 #include<ncurses.h>
-#include<signal.h>
+#include<signal.h> //Linux api to send signal to process
 using namespace std ;
 
 void handleKeyboardInput(char ch ,bool &sortByCPU){
@@ -60,9 +60,10 @@ while (true){
     calculateProcessCpuUsage(processes , data2.first - data1.first);
     double cpuUsage = getCpuUsage(data1 ,data2);
     double memUsage=  getMemUsage();
+    double diskUsage = getDiskUsage();
     // sort(processes.begin(),processes.end(),compareByCPU);
     renderSortMessage(processes,sortByCPU);
-    renderSystemStats(cpuUsage ,memUsage);
+    renderSystemStats(cpuUsage ,memUsage ,diskUsage);
     renderProcessTable(processes,10);
     refresh() ;
     int ch = getch();

@@ -3,5 +3,5 @@
 #include "process.h"
 
 void renderProcessTable(const std::vector<Process> &processes,int limit);
-void renderSystemStats(double cpuUsage ,double memUsage );
+void renderSystemStats(double cpuUsage ,double memUsage ,double diskUsage);
 #endif 
