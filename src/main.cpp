@@ -21,11 +21,11 @@ void handleKeyboardInput(char ch ,bool &sortByCPU){
 void renderSortMessage(vector<Process> &processes , bool &sortByCPU){
 if(sortByCPU){
     sort(processes.begin(), processes.end(), compareByCPU);
-    mvprintw(22 ,2 ,"SORT BY CPU");
+    mvprintw(20 ,2 ,"SORT BY CPU");
     }
 else{
     sort(processes.begin(), processes.end(), compareByMemory);
-    mvprintw(22 ,2 ,"SORT BY MEMORY");
+    mvprintw(20 ,2 ,"SORT BY MEMORY");
     }
 }
 void handleKillProcess(){
@@ -37,8 +37,8 @@ void handleKillProcess(){
         noecho();
         timeout(100);
         int result =kill(pid , SIGTERM);
-        if (result ==0) mvprintw(25 ,2 , "Process Successfully Terminated ");
-        else mvprintw(25,2 ,"Failed to terminate process") ;
+        if (result ==0) mvprintw(22 ,2 , "Process Successfully Terminated ");
+        else mvprintw(22,2 ,"Failed to terminate process") ;
         refresh();
         getch();
 }    
@@ -54,17 +54,21 @@ while (true){
     clear();
     mvprintw(0, 2,"Press q to quit | c = CPU sort | m = Memory sort | k = kill process");
     auto data1 = getCPUData();
+    auto networkdata1 = getNetworkData();
     vector<Process> processes = takeProcessSnapshot();
     sleep(1);
     auto data2 = getCPUData();
+    auto networkdata2 = getNetworkData();
+    auto netSpeed = calculateNetSpeed(networkdata1,networkdata2);
     calculateProcessCpuUsage(processes , data2.first - data1.first);
     double cpuUsage = getCpuUsage(data1 ,data2);
     double memUsage=  getMemUsage();
-    double diskUsage = getDiskUsage();
+    DiskStats diskData = getDiskData();
     // sort(processes.begin(),processes.end(),compareByCPU);
     renderSortMessage(processes,sortByCPU);
-    renderSystemStats(cpuUsage ,memUsage ,diskUsage);
+    renderSystemStats(cpuUsage ,memUsage ,diskData);
     renderProcessTable(processes,10);
+    renderNetworkSpeed(netSpeed);
     refresh() ;
     int ch = getch();
     if(ch == 'q') break ;

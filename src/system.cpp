@@ -61,19 +61,57 @@ double getMemUsage(){
 	if (MemTotal== 0) return 0 ;
 	return double(MemTotal - MemAvail)/MemTotal ;	
 }
-double getDiskUsage(){
+double bytesToGB(long long data){
+	return double ( data) / (1LL << 30 );
+}
+double bytesToKB(long long data){
+	return double ( data) / (1LL << 10 );
+}
+DiskStats getDiskData(){
+	DiskStats d ;
 	struct statvfs diskData;
 	auto check = statvfs("/", &diskData);
-	if (check!=0) return 0 ;
+	if (check!=0) return {} ;
 	long total_block = diskData.f_blocks;
 	long avail_block = diskData.f_bavail;
-	long block_size = diskData.f_frsize;
-	long long total_capacity = total_block* block_size ;
-	long long free_capacity = avail_block * block_size ; 
-	if (total_capacity==0) return 0 ;
-	return  double(total_capacity - free_capacity)/total_capacity ;
+	long block_size = diskData.f_frsize; // both f_bsize & f_frsize are same
+	d.totalSpace = total_block* block_size ;
+	d.freeSpace = avail_block * block_size ; 
+	if (d.totalSpace==0) return {} ;
+	d.usage = double(d.totalSpace - d.freeSpace)/d.totalSpace ;
+	return d;
 	// since block size gets cut from numerator/ denominator later we ignore block size
 }
+pair <long,long>  getNetworkData(){
+	ifstream file ("/proc/net/dev");
+	if(!file.is_open()){
+		cout <<" error occured while opening the file" ;
+		return {0,0};
+	}
+	long received_bytes = 0; 
+	long transmitted_bytes = 0;
+	string line ; 
+	while (getline(file,line)){
+		stringstream ss(line) ;
+		string key ;
+		ss>>key ;
+		if(key =="enp0s3:"){
+			ss >> received_bytes;
+			for(int i =0 ; i<7 ; i++){
+				ss>>key;
+			}
+			ss >> transmitted_bytes;
+			break ;
+		}		
+	}
+	return {received_bytes,transmitted_bytes};
+}
+pair<double,double> calculateNetSpeed(pair<long,long> data1 , pair<long,long> data2){
+	long delta_received = data2.first - data1.first ;
+	long delta_transmitted = data2.second - data1.second ;
+	return {bytesToKB(delta_received),bytesToKB(delta_transmitted)};
+}
+
 
 
 
