@@ -7,11 +7,12 @@
 #include<iomanip>
 #include<thread>
 #include<mutex>
+#include<atomic>
 #include<ncurses.h>
 #include<signal.h> //Linux api to send signal to process
 using namespace std ;
 mutex dataMutex ;
-
+atomic<bool> running (true);
 void handleKeyboardInput(char ch ,bool &sortByCPU){
      if(ch=='c') {
         sortByCPU =true ;
@@ -46,11 +47,12 @@ void handleKillProcess(){
         getch();
     }  
     void collectSystemData(SystemData &systemData){
-    while (true){
+    while (running){
         auto data1 = getCPUData();
         auto networkdata1 = getNetworkData();
         vector <Process> temp_process = takeProcessSnapshot();
         sleep(1);
+        if (!running) break ;
         auto data2 = getCPUData();
         auto networkdata2 = getNetworkData();
         double cpuUsage = getCpuUsage(data1 ,data2);
@@ -76,7 +78,6 @@ timeout(100);
 bool sortByCPU= true ;
 SystemData systemData;
 thread collectorThread(collectSystemData, ref(systemData));
-collectorThread.detach();
 while (true){
     clear();
     mvprintw(0, 2,"Press q to quit | c = CPU sort | m = Memory sort | k = kill process");
@@ -91,13 +92,17 @@ while (true){
     renderNetworkSpeed(localData.netSpeed);
     refresh() ;
     int ch = getch();
-    if(ch == 'q') break ;
+    if(ch == 'q'){
+        running = false ;
+        break ;
+    } 
     else if(ch == 'k'){
-     handleKillProcess();
+        handleKillProcess();
     }
-
+    
     else handleKeyboardInput(ch ,sortByCPU);
 }
+collectorThread.join();
 endwin();
  
 }
