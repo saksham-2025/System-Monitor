@@ -36,3 +36,24 @@ void renderNetworkSpeed(pair<double,double> netSpeed){
     mvprintw(21 , 40 ,"Upload  : %.2f Kb/sec" , netSpeed.second);
 
 }
+
+void renderSortMessage(vector<Process> &processes , bool &sortByCPU){
+if(sortByCPU){
+    sort(processes.begin(), processes.end(), compareByCPU);
+    mvprintw(20 ,2 ,"SORT BY CPU");
+    }
+else{
+    sort(processes.begin(), processes.end(), compareByMemory);
+    mvprintw(20 ,2 ,"SORT BY MEMORY");
+    }
+}
+
+void renderDashboard(SystemData &data , bool sortByCPU){
+    clear();
+    mvprintw(0, 2,"Press q to quit | c = CPU sort | m = Memory sort | k = kill process");
+    renderSortMessage(data.processes,sortByCPU);
+    renderSystemStats(data.cpuUsage ,data.memUsage ,data.diskData);
+    renderProcessTable(data.processes,10);
+    renderNetworkSpeed(data.netSpeed);
+    refresh() ;
+}
