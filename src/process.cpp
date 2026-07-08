@@ -61,8 +61,9 @@ bool compareByMemory(const Process &a , const Process &b){
 }
 vector<Process> takeProcessSnapshot(){
         vector <Process> processes ;
+        processes.reserve(512);
         DIR* dir = opendir("/proc");
-		if (!dir) { cerr << "Cannot open /proc\n"; return {}; }
+		if (!dir)   return {}; 
         struct dirent* entry ;
 
         while((entry =readdir(dir))!=NULL){

@@ -17,8 +17,8 @@ pair<long,long> getCPUData(){
 	stringstream ss (line);
 	string cpu ; 
 	ss >> cpu ;
-	long user , nice , system , idle ;
-	ss >> user >>nice >> system >>idle ; 
+	long user , nice , system , idle , iowait , irq , softirq ;
+	ss >> user >>nice >> system >>idle >> iowait >> irq >> softirq; 
 	file.close() ;
 	long totaltime = (user+nice +system +idle);
 	return {totaltime,idle};
@@ -48,7 +48,7 @@ pair<long , long> getMemData(){
 	}
 	return{memtotal,memavail};
 }
-double getCpuUsage( pair<long,long>  data1 , pair<long,long> data2){
+double getCpuUsage(const pair<long,long> & data1 ,const pair<long,long> &data2){
 	long total = data2.first - data1.first ;
 	long idle = data2.second - data1.second ;
 	if(total == 0 ) return 0;
@@ -106,7 +106,7 @@ pair <long,long>  getNetworkData(){
 	}
 	return {received_bytes,transmitted_bytes};
 }
-pair<double,double> calculateNetSpeed(pair<long,long> data1 , pair<long,long> data2){
+pair<double,double> calculateNetSpeed(const pair<long,long> & data1 ,const pair<long,long> & data2){
 	long delta_received = data2.first - data1.first ;
 	long delta_transmitted = data2.second - data1.second ;
 	return {bytesToKB(delta_received),bytesToKB(delta_transmitted)};

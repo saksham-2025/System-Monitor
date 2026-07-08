@@ -6,10 +6,10 @@
 struct Process{
     std::string PID ;
     std::string Name ; 
-    long memory ;
-    long oldCPUTime ;
-    long newCPUTime ;
-    double cpuUsage ;
+    long memory =0 ;
+    long oldCPUTime = 0  ;
+    long newCPUTime = 0 ;
+    double cpuUsage = 0.0;
 };
 //To check whether the file name is numeric or not
 bool isNumeric(std::string name) ;

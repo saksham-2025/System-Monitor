@@ -1,7 +1,6 @@
 #include "renderer.h"  
 #include "system.h" 
-#include "monitor.h"
-#include<iostream> 
+#include "monitor.h" 
 #include<thread>
 #include<mutex>
 #include<atomic>
