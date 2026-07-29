@@ -7,8 +7,17 @@
 #include<mutex>
 #include <unistd.h>
 
+const int VISIBLE_ROWS =10 ;
 void initializeNcurses(){
     initscr();
+    start_color();
+    init_pair(1, COLOR_CYAN,   COLOR_BLACK);   // Header
+    init_pair(2, COLOR_GREEN,  COLOR_BLACK);   // CPU / Memory
+    init_pair(3, COLOR_BLUE,   COLOR_BLACK);   // Disk
+    init_pair(4, COLOR_YELLOW, COLOR_BLACK);   // Table Header
+    init_pair(5, COLOR_RED,    COLOR_BLACK);   // High Usage
+    init_pair(6, COLOR_WHITE,  COLOR_BLACK);   // Normal Text
+    init_pair(7, COLOR_MAGENTA,COLOR_BLACK);   // Network
     noecho();        // don't print keypresses to screen
     curs_set(0);     // hide the blinking cursor
     keypad(stdscr, TRUE); //without this terminal show ^[[AB ..so this command handles this
@@ -44,13 +53,19 @@ void handleKillProcess(){
         getch();
 }  
 
-void processInput(int ch, bool& sortByCPU, std::atomic<bool> & running){
+void processInput(int ch, bool& sortByCPU, int &startIndex, std::atomic<bool> & running , int processCount){
 
     if(ch == 'q'){
         running = false;
     }
     else if(ch == 'k'){
         handleKillProcess();
+    }
+    else if (ch==KEY_DOWN  && (startIndex + VISIBLE_ROWS) < processCount ){
+        startIndex++ ;
+    }
+    else if(ch == KEY_UP && startIndex >0){
+        startIndex--;
     }
     else{
         handleKeyboardInput(ch, sortByCPU);
