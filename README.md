@@ -148,7 +148,7 @@ sudo apt install libncurses5-dev libncursesw5-dev
 Clone the repository and build the project using CMake:
 
 ```bash
-git clone <https://github.com/saksham-2025/System-Monitor>
+git clone https://github.com/saksham-2025/System-Monitor
 cd system-monitor
 
 mkdir build
