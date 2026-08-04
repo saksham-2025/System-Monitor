@@ -23,10 +23,10 @@ void renderProcessTable(const vector<Process> &processes,int limit ,int startInd
         mvprintw(idx+13 , 20 , "%s",p.Name.c_str());
         mvprintw(idx+13 , 50, "%.2f%%" , p.cpuUsage*100);
         mvprintw(idx+13, 63 , "%ld" , p.memory);
-        int size =static_cast<int>(processes.size());
-        int last = min((startIndex+VISIBLE_ROWS),size);
-        mvprintw(25,2,"%s%d%s%d%s%d%s","Showing ",startIndex+1 ,"-", last," of ", size , " processes");
     } 
+    int size =static_cast<int>(processes.size());
+    int last = min((startIndex+VISIBLE_ROWS),size);
+    mvprintw(25,2,"%s%d%s%d%s%d%s","Showing ",startIndex+1 ,"-", last," of ", size , " processes");
 }
 void renderSystemStats(double cpuUsage ,double memUsage , const DiskStats &  diskData){
     mvprintw(5,1, "+-----------------------+");
