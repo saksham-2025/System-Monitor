@@ -1,14 +1,14 @@
-# 🚀 Next-Gen Linux System Monitor
+# Next-Gen Linux System Monitor
 
 A multithreaded Linux system monitoring tool built in modern C++ that provides real-time CPU, memory, disk, network, and process monitoring through an interactive ncurses-based dashboard. The application leverages Linux system interfaces such as `/proc` and `statvfs` to collect live system metrics while maintaining a responsive user interface using multithreading and thread-safe data sharing.
 
-## 📖 Overview
+##  Overview
 
 Next-Gen Linux System Monitor is a real-time terminal-based system monitoring application developed in C++ for Linux environments. It is designed to provide users with live insights into system performance while demonstrating core systems programming concepts such as multithreading, process management, file system interaction, and thread synchronization.
 
 The application gathers CPU, memory, disk, network, and process information directly from Linux system interfaces such as `/proc` and `statvfs`. A dedicated background thread continuously collects system statistics, while the main thread renders an interactive ncurses-based dashboard, ensuring a responsive user interface through mutex-protected shared data.
 
-## 🌟 Project Highlights
+##  Project Highlights
 
 - Built entirely in Modern C++ for Linux.
 - Uses multithreading to separate data collection from UI rendering.
@@ -16,42 +16,42 @@ The application gathers CPU, memory, disk, network, and process information dire
 - Interactive ncurses dashboard with keyboard navigation.
 - Modular architecture with dedicated rendering, monitoring, process, and system modules.
 
-## ✨ Features
+##  Features
 
-### 📊 System Monitoring
+###  System Monitoring
 - Real-time CPU usage monitoring
 - Real-time memory usage monitoring
 - Disk usage, total storage, and free storage statistics
 - Live network upload and download speed monitoring
 
-### ⚙️ Process Management
+###  Process Management
 - Displays all active Linux processes
 - Sort processes by CPU usage
 - Sort processes by memory usage
 - Terminate processes directly from the dashboard
 - Scroll through the complete process list using keyboard navigation
 
-### 🖥️ Interactive Dashboard
+###  Interactive Dashboard
 - Built with **ncurses** for a terminal-based interface
 - Color-coded sections for improved readability
 - Displays the current sorting mode
 - Shows the visible process range (e.g., *Showing 11–20 of 127 processes*)
 - Responsive keyboard controls
 
-### 🚀 Architecture & Performance
+###  Architecture & Performance
 - Multithreaded design for responsive UI updates
 - Dedicated background thread for data collection
 - Thread-safe shared data using **std::mutex**
 - Efficient data sharing through a centralized `SystemData` structure
 - Modular project structure with separated rendering, monitoring, and system information modules.
   
-  ## 📸 Dashboard Preview
+  ##  Dashboard Preview
 
 The following screenshot shows the interactive terminal dashboard displaying real-time system statistics, process information, and network activity.
 
 ![Next-Gen Linux System Monitor Dashboard](screenshots/dashboard.png)
 
-## 🏗️ Architecture
+##  Architecture
 
 The application follows a modular architecture where each component is responsible for a specific task.
 
@@ -95,7 +95,7 @@ The application follows a modular architecture where each component is responsib
 - **process.cpp** – Retrieves process information and calculates per-process CPU and memory usage.
 - **renderer.cpp** – Renders the interactive dashboard using ncurses.
 
-## 📂 Project Structure
+##  Project Structure
 
 ```
 system-monitor/
@@ -117,7 +117,7 @@ system-monitor/
 └── README.md              # Project documentation
 ```
 
-## 🛠️ Technologies Used
+##  Technologies Used
 
 - **Language:** C++
 - **Operating System:** Linux (Ubuntu)
@@ -128,7 +128,7 @@ system-monitor/
 - **Linux APIs:** `/proc`, `statvfs`, POSIX signals
 - **Standard Library:** STL (vector, string, algorithm, filesystem-independent utilities)
 
-## ⚙️ Build & Run
+##  Build & Run
 
 ### Prerequisites
 
@@ -164,7 +164,7 @@ make
 ./monitor
 ```
 
-## 🎮 Controls
+##  Controls
 
 | Key | Action |
 |-----|--------|
@@ -175,11 +175,11 @@ make
 | `K` | Terminate a process by entering its PID |
 | `Q` | Quit the application |
 
-## 🚀 Future Improvements
+##  Future Improvements
 
 - Automatically detect the active network interface instead of using a fixed interface name (`enp0s3`), allowing the application to work across different Linux systems without code changes.
 
-## 📚 Learning Outcomes
+##  Learning Outcomes
 
 Through this project, I gained hands-on experience with:
 
