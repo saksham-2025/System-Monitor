@@ -4,7 +4,7 @@ A multithreaded Linux system monitoring tool built in modern C++ that provides r
 
 ##  Overview
 
-Next-Gen Linux System Monitor is a real-time terminal-based system monitoring application developed in C++ for Linux environments. It is designed to provide users with live insights into system performance while demonstrating core systems programming concepts such as multithreading, process management, file system interaction, and thread synchronization.
+Linux System Monitor is a real-time terminal-based system monitoring application developed in C++ for Linux environments. It is designed to provide users with live insights into system performance while demonstrating core systems programming concepts such as multithreading, process management, file system interaction, and thread synchronization.
 
 The application gathers CPU, memory, disk, network, and process information directly from Linux system interfaces such as `/proc` and `statvfs`. A dedicated background thread continuously collects system statistics, while the main thread renders an interactive ncurses-based dashboard, ensuring a responsive user interface through mutex-protected shared data.
 
@@ -49,7 +49,7 @@ The application gathers CPU, memory, disk, network, and process information dire
 
 The following screenshot shows the interactive terminal dashboard displaying real-time system statistics, process information, and network activity.
 
-![Next-Gen Linux System Monitor Dashboard](screenshots/dashboard.png)
+![Linux System Monitor Dashboard](screenshots/dashboard.png)
 
 ##  Architecture
 
@@ -149,7 +149,7 @@ Clone the repository and build the project using CMake:
 
 ```bash
 git clone https://github.com/saksham-2025/System-Monitor
-cd system-monitor
+cd System-Monitor
 
 mkdir build
 cd build

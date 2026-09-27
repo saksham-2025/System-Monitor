@@ -90,7 +90,7 @@ void renderDashboard(SystemData &data , bool sortByCPU, int startIndex){
     clear();
     mvprintw (0,1,"===========================================================================");
     attron(COLOR_PAIR(1) | A_BOLD);
-    mvprintw (1,25, " Next-Gen System Monitor");
+    mvprintw (1,28, " System Monitor");
     attroff(COLOR_PAIR(1) | A_BOLD);
     mvprintw (2,1,"===========================================================================");
     mvprintw (3, 15," Q Quit | C CPU | M Memory | K Kill | Up/Down Scroll ");
