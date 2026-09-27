@@ -1,4 +1,4 @@
-# Next-Gen Linux System Monitor
+# Linux System Monitor
 
 A multithreaded Linux system monitoring tool built in modern C++ that provides real-time CPU, memory, disk, network, and process monitoring through an interactive ncurses-based dashboard. The application leverages Linux system interfaces such as `/proc` and `statvfs` to collect live system metrics while maintaining a responsive user interface using multithreading and thread-safe data sharing.
 
