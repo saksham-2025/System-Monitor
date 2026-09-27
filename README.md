@@ -35,7 +35,7 @@ The application gathers CPU, memory, disk, network, and process information dire
 - Built with **ncurses** for a terminal-based interface
 - Color-coded sections for improved readability
 - Displays the current sorting mode
-- Shows the visible process range (e.g., *Showing 11–20 of 127 processes*)
+- Shows the visible process range (e.g., *Showing 1–10 of 152 processes*)
 - Responsive keyboard controls
 
 ###  Architecture & Performance
