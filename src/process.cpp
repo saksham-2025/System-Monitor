@@ -36,9 +36,9 @@ long getProcessVmRSS(string path){
     }
     return 0;
 }
-long getProcessCPUTime(string path){
+bool getProcessCPUTime(string path , long &cpuTime){
 	ifstream file(path);
-	if(!file.is_open()) return 0 ; 
+	if(!file.is_open()) return false ; 
 	string line ;
 	getline(file,line);
 	stringstream ss(line);
@@ -49,8 +49,9 @@ long getProcessCPUTime(string path){
 	long utime ;
 	long stime ;
 	ss >> utime >> stime;
+    cpuTime = utime+stime ;
 	file.close();
-	return utime+stime;
+	return true;
 }
 bool compareByCPU(const Process &a ,const Process &b){
 	return a.cpuUsage>b.cpuUsage ;
@@ -76,7 +77,7 @@ vector<Process> takeProcessSnapshot(){
             p.Name = getProcessName(Name_Path);
             p.memory= getProcessVmRSS(VmRSS_Path);
 			if(p.memory==0) continue ;
-            p.oldCPUTime =getProcessCPUTime(CPU_path);
+            if(!getProcessCPUTime(CPU_path , p.oldCPUTime)) continue ;
             processes.push_back(p);
         }
     }
@@ -84,9 +85,12 @@ vector<Process> takeProcessSnapshot(){
 	return processes ;
 }
 void calculateProcessCpuUsage(vector<Process> &processes , double CpuDelta ){
+    
     for (Process &p : processes){
+        long currentCpuTime ;
         string path = "/proc/"+p.PID +"/stat";
-        p.newCPUTime = getProcessCPUTime(path);
+        if(!getProcessCPUTime(path , currentCpuTime)) continue ;
+        p.newCPUTime = currentCpuTime;
         double ProcessDelta = p.newCPUTime-p.oldCPUTime;
         if(CpuDelta==0) continue ;
         p.cpuUsage = double(ProcessDelta)/CpuDelta ;    

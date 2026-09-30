@@ -17,7 +17,7 @@ bool isNumeric(std::string name) ;
 std::string getProcessName(std::string path);
 
 long getProcessVmRSS(std::string path) ;
-long getProcessCPUTime(std::string path);
+bool getProcessCPUTime(std::string path , long &cpuTime);
 bool compareByCPU(const Process &a ,const Process &b);
 bool compareByMemory(const Process &a , const Process &b);
 std::vector<Process> takeProcessSnapshot();

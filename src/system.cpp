@@ -20,7 +20,7 @@ pair<long,long> getCPUData(){
 	long user , nice , system , idle , iowait , irq , softirq ;
 	ss >> user >>nice >> system >>idle >> iowait >> irq >> softirq; 
 	file.close() ;
-	long totaltime = (user+nice +system +idle);
+	long totaltime = (user+nice +system +idle+ iowait +irq +softirq);
 	return {totaltime,idle};
 
 }
